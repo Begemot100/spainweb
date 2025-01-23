@@ -24,6 +24,7 @@ if not DATABASE_URL:
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "your_default_secret_key")
 
 # Убедимся, что папка instance существует
 os.makedirs(os.path.join(BASE_DIR, 'instance'), exist_ok=True)
