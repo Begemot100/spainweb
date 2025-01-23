@@ -104,6 +104,34 @@
         .word-tag:hover {
             background-color: #0056b3;
         }
+
+        /* Адаптация для маленьких экранов */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1, h2 {
+                font-size: 1.5em;
+            }
+
+            .btn {
+                font-size: 1em;
+                padding: 8px;
+            }
+        }
+
+        /* Адаптация для iPhone SE и аналогичных устройств */
+        @media (max-width: 375px) {
+            h1, h2 {
+                font-size: 1.2em;
+            }
+
+            .btn {
+                padding: 6px;
+                font-size: 0.9em;
+            }
+        }
     </style>
 </head>
 <body>
