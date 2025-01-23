@@ -168,7 +168,9 @@ def test(topic_id):
 
     learned_words = progress.learned_words.split(",") if progress and progress.learned_words else []
 
-    words = Word.query.filter(Word.topic_id == topic_id, Word.word.in_(learned_words)).order_by(Word.id.desc()).limit(10).all()
+    # Get up to 10 most recently added words
+    words = Word.query.filter(Word.topic_id == topic_id, Word.word.in_(learned_words))\
+                      .order_by(Word.id.desc()).limit(10).all()
 
     if request.method == "POST":
         correct_answers = 0
@@ -180,7 +182,12 @@ def test(topic_id):
                 correct_answers += 1
 
         score = (correct_answers / total_questions) * 100
-        progress.score = max(progress.score, score) if progress else score
+        if progress:
+            progress.score = max(progress.score, score)
+        else:
+            progress = Progress(user_id=session["user_id"], topic_id=topic_id, score=score, learned_words="")
+            db.session.add(progress)
+
         db.session.commit()
 
         return render_template(
@@ -194,7 +201,8 @@ def test(topic_id):
     test_data = []
     for word in words:
         options = [word.translation]
-        incorrect_translations = Word.query.filter(Word.id != word.id, Word.topic_id == topic_id).limit(3).all()
+        incorrect_translations = Word.query.filter(Word.id != word.id, Word.topic_id == topic_id)\
+                                           .limit(3).all()
         options += [incorrect.translation for incorrect in incorrect_translations]
         random.shuffle(options)
 
@@ -205,7 +213,6 @@ def test(topic_id):
         })
 
     return render_template("test.html", topic=topic, test_data=test_data)
-
 
 def process_generated_words(generated_text, topic_id, learned_words):
     new_words = []
