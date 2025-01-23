@@ -104,6 +104,33 @@
         .word-tag:hover {
             background-color: #0056b3;
         }
+         .repeat-btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        color: #fff;
+        background-color: #007BFF;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 123, 255, 0.4);
+    }
+
+    .repeat-btn:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 123, 255, 0.6);
+    }
+
+    .repeat-btn:active {
+        background-color: #003f7f;
+        transform: translateY(0);
+        box-shadow: 0 3px 6px rgba(0, 123, 255, 0.4);
+    }
 
         /* Адаптация для маленьких экранов */
         @media (max-width: 768px) {
