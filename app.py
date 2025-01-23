@@ -6,8 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import openai
 import random
 from models import User, Topic, Word, Progress
-from extensions import db  # Убедитесь, что extensions содержит экземпляр SQLAlchemy
-
+from extensions import db  
 # Загружаем переменные окружения
 load_dotenv()
 
