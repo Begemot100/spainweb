@@ -5,12 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Result</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #007BFF;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Адаптация для iPhone и маленьких экранов */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Test Result</h1>
-        <p>Topic: {{ topic.name }}</p>
-        <p>Your Score: {{ score }}%</p>
+        <h1>Test Results for {{ topic.name }}</h1>
+        <p><strong>Score:</strong> {{ score|int }}%</p>
+        <p><strong>Correct Answers:</strong> {{ correct_answers }} / {{ total_questions }}</p>
 
         {% if score >= 80 %}
             <p>Congratulations! You passed the test.</p>

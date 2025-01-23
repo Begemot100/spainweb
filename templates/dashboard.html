@@ -165,6 +165,9 @@
                         </span>
                         {% endfor %}
                     </div>
+                    <a href="{{ url_for('test', topic_id=progress.topic_id) }}" class="btn btn-primary repeat-btn">
+                        Повторить слова
+                    </a>
                 </div>
             </div>
             {% endfor %}
