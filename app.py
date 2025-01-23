@@ -166,9 +166,15 @@ def test(topic_id):
 
     progress = Progress.query.filter_by(user_id=session["user_id"], topic_id=topic_id).first()
 
-    learned_words = progress.learned_words.split(",") if progress and progress.learned_words else []
+    # Ensure progress exists
+    if not progress or not progress.learned_words:
+        flash("No words to test for this topic. Start studying first!", "error")
+        return redirect(url_for("study", topic_id=topic_id))
 
-    # Get up to 10 most recently added words
+    # Retrieve newly generated words for the test
+    learned_words = progress.learned_words.split(",") if progress.learned_words else []
+
+    # Limit to the 10 most recent learned words
     words = Word.query.filter(Word.topic_id == topic_id, Word.word.in_(learned_words))\
                       .order_by(Word.id.desc()).limit(10).all()
 
@@ -176,19 +182,81 @@ def test(topic_id):
         correct_answers = 0
         total_questions = len(words)
 
+        # Evaluate the user's answers
         for word in words:
             user_answer = request.form.get(f"word_{word.id}")
             if user_answer == word.translation:
                 correct_answers += 1
 
         score = (correct_answers / total_questions) * 100
+
+        # Update the progress score
         if progress:
             progress.score = max(progress.score, score)
-        else:
-            progress = Progress(user_id=session["user_id"], topic_id=topic_id, score=score, learned_words="")
-            db.session.add(progress)
+            db.session.commit()
 
-        db.session.commit()
+        # Render results
+        return render_template(
+            "result.html",
+            score=score,
+            correct_answers=correct_answers,
+            total_questions=total_questions,
+            topic=topic
+        )
+
+    # Prepare test data
+    test_data = []
+    for word in words:
+        options = [word.translation]
+
+        # Generate incorrect options for the test
+        incorrect_translations = Word.query.filter(Word.id != word.id, Word.topic_id == topic_id)\
+                                           .limit(3).all()
+        options += [incorrect.translation for incorrect in incorrect_translations]
+        random.shuffle(options)
+
+        test_data.append({
+            "id": word.id,
+            "word": word.word,
+            "options": options
+        })
+
+    return render_template("test.html", topic=topic, test_data=test_data)
+
+@app.route("/repeat_test/<int:topic_id>", methods=["GET", "POST"])
+def repeat_test(topic_id):
+    topic = Topic.query.get(topic_id)
+    if not topic:
+        flash("Topic not found.", "error")
+        return redirect(url_for("dashboard"))
+
+    progress = Progress.query.filter_by(user_id=session["user_id"], topic_id=topic_id).first()
+
+    # Ensure progress exists and has learned words
+    if not progress or not progress.learned_words:
+        flash("No words available for repetition in this topic. Start studying first!", "error")
+        return redirect(url_for("dashboard"))
+
+    # Retrieve learned words
+    learned_words = progress.learned_words.split(",") if progress.learned_words else []
+
+    # Randomly select up to 10 words from learned words
+    words = Word.query.filter(Word.topic_id == topic_id, Word.word.in_(learned_words)).all()
+    random.shuffle(words)
+    words = words[:10]  # Limit to 10 words
+
+    if request.method == "POST":
+        correct_answers = 0
+        total_questions = len(words)
+
+        # Evaluate the user's answers
+        for word in words:
+            user_answer = request.form.get(f"word_{word.id}")
+            if user_answer == word.translation:
+                correct_answers += 1
+
+        score = (correct_answers / total_questions) * 100
+        flash(f"Your score: {score:.2f}% ({correct_answers}/{total_questions} correct answers).", "info")
 
         return render_template(
             "result.html",
@@ -198,6 +266,7 @@ def test(topic_id):
             topic=topic
         )
 
+    # Prepare test data
     test_data = []
     for word in words:
         options = [word.translation]

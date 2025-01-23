@@ -192,7 +192,7 @@
                         </span>
                         {% endfor %}
                     </div>
-                    <a href="{{ url_for('test', topic_id=progress.topic_id) }}" class="btn btn-primary repeat-btn">
+                    <a href="{{ url_for('repeat_test', topic_id=progress.topic_id) }}" class="btn btn-primary repeat-btn">
                         Повторить слова
                     </a>
                 </div>
@@ -218,23 +218,4 @@
             if (currentText === word) {
                 element.textContent = translation;
             } else {
-                element.textContent = word;
-            }
-        }
-
-        // Функция для переключения видимости прогресса
-        function toggleProgress(card) {
-            const content = card.querySelector('.progress-content');
-            const icon = card.querySelector('.toggle-icon');
-
-            if (content.style.display === 'none' || content.style.display === '') {
-                content.style.display = 'block';
-                icon.textContent = '−'; // Изменяем иконку на минус
-            } else {
-                content.style.display = 'none';
-                icon.textContent = '+'; // Изменяем иконку на плюс
-            }
-        }
-    </script>
-</body>
-</html>
+   
