@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -7,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import openai
 import random
 from models import User, Topic, Word, Progress
-from extensions import db
+from extensions import db  # Убедитесь, что extensions содержит экземпляр SQLAlchemy
 
 # Загружаем переменные окружения
 load_dotenv()
@@ -18,12 +17,19 @@ app = Flask(__name__)
 # Конфигурация базы данных
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASE_PATH = os.path.join(BASE_DIR, 'instance', 'database.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DATABASE_PATH}"
+DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
+
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL не настроен.")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Убедимся, что папка instance существует
 os.makedirs(os.path.join(BASE_DIR, 'instance'), exist_ok=True)
-
+with open(DATABASE_PATH, 'w') as db_file:
+    db_file.write('')
+print("Test: database file created manually.")
 # Инициализация базы данных
 db.init_app(app)
 
@@ -32,15 +38,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     raise ValueError("OPENAI_API_KEY не настроен.")
 
-
-# Устанавливаем OpenAI API ключ
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Для отладки выводим информацию о подключении к базе данных
-print("Loaded DATABASE_URL from .env:", os.getenv("DATABASE_URL"))
+# Отладочные выводы
+print("BASE_DIR:", BASE_DIR)
 print("DATABASE_PATH:", DATABASE_PATH)
-print("SQLALCHEMY_DATABASE_URI:", app.config['SQLALCHEMY_DATABASE_URI'])
-
+print("DATABASE_URL:", DATABASE_URL)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
