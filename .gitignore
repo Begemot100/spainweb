@@ -1,0 +1,14 @@
+# Игнорировать виртуальное окружение
+.venv/
+
+# Игнорировать Terraform файлы и каталоги
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# Игнорировать временные файлы
+__pycache__/
+*.pyc
+.env
+*.log

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Result</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Test Result</h1>
+        <p>Topic: {{ topic.name }}</p>
+        <p>Your Score: {{ score }}%</p>
+
+        {% if score >= 80 %}
+            <p>Congratulations! You passed the test.</p>
+        {% else %}
+            <p>Don't worry, you can try again!</p>
+        {% endif %}
+
+        <a href="{{ url_for('dashboard') }}" class="btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>

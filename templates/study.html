@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study - {{ topic.name }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Основной контент страницы -->
+    <div class="container">
+        <h1>Study - {{ topic.name }}</h1>
+        <ul>
+            {% for word in words %}
+            <li>
+                <strong>{{ word.word }}</strong> - {{ word.translation }}
+                <p>Context: {{ word.context }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="/test/{{ topic.id }}" class="btn">Take the Test</a>
+    </div>
+</body>
+</html>

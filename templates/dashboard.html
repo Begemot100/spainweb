@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .btn {
+            display: block;
+            padding: 10px;
+            text-align: center;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+        }
+
+        .progress-card {
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .progress-card:hover {
+            background-color: #e6e6e6;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .toggle-icon {
+            font-size: 16px;
+        }
+
+        .progress-content {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .word-tag {
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .word-tag:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ session['username'] }}</h1>
+
+        <h2>Select a topic to start learning:</h2>
+        <div class="topics-grid">
+            {% for topic in topics %}
+            <a href="/study/{{ topic.id }}" class="btn">{{ topic.name }}</a>
+            {% endfor %}
+        </div>
+
+        <h2>Your Progress</h2>
+
+        {% if progress_list %}
+        <div class="progress-container">
+            {% for progress in progress_list %}
+            <div class="progress-card" onclick="toggleProgress(this)">
+                <p><strong>Score:</strong> {{ progress.score | round(0) }}%</p>
+                <div class="progress-header">
+                    <span>{{ progress.topic }}</span>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="progress-content">
+                    <p><strong>Learned Words:</strong></p>
+                    <div class="word-list">
+                        {% for word in progress.learned_words %}
+                        <span class="word-tag" onclick="toggleWord(event, this)" data-word="{{ word['word'] }}" data-translation="{{ word['translation'] }}">
+                            {{ word['word'] }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No progress yet. Start studying to track your progress!</p>
+        {% endif %}
+    </div>
+
+    <script>
+        // Функция для переключения между словом и переводом
+        function toggleWord(event, element) {
+            // Останавливаем всплытие события, чтобы не закрывался блок
+            event.stopPropagation();
+
+            const currentText = element.textContent;
+            const word = element.getAttribute('data-word');
+            const translation = element.getAttribute('data-translation');
+
+            // Меняем текст между словом и переводом
+            if (currentText === word) {
+                element.textContent = translation;
+            } else {
+                element.textContent = word;
+            }
+        }
+
+        // Функция для переключения видимости прогресса
+        function toggleProgress(card) {
+            const content = card.querySelector('.progress-content');
+            const icon = card.querySelector('.toggle-icon');
+
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                icon.textContent = '−'; // Изменяем иконку на минус
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '+'; // Изменяем иконку на плюс
+            }
+        }
+    </script>
+</body>
+</html>
