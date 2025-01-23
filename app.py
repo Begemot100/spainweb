@@ -16,28 +16,22 @@ app = Flask(__name__)
 
 # Конфигурация базы данных
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATABASE_PATH = os.path.join(BASE_DIR, 'instance', 'database.db')
+INSTANCE_DIR = os.path.join(BASE_DIR, 'instance')
+os.makedirs(INSTANCE_DIR, exist_ok=True)  # Убедитесь, что папка instance существует
+DATABASE_PATH = os.path.join(INSTANCE_DIR, 'database.db')
 DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
-
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL не настроен.")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "your_default_secret_key")
 
-# Убедимся, что папка instance существует
-os.makedirs(os.path.join(BASE_DIR, 'instance'), exist_ok=True)
-with open(DATABASE_PATH, 'w') as db_file:
-    db_file.write('')
-print("Test: database file created manually.")
-# Инициализация базы данных
-db.init_app(app)
-
 # Проверка API ключа OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     raise ValueError("OPENAI_API_KEY не настроен.")
+
+# Инициализация базы данных
+db.init_app(app)
 
 # Отладочные выводы
 print("BASE_DIR:", BASE_DIR)
@@ -97,6 +91,7 @@ def dashboard():
 
     progress_list = [
         {
+            "topic_id": topic.id,
             "topic": topic.name,
             "score": progress.score if progress else 0,
             "learned_words": [
@@ -118,23 +113,18 @@ def study(topic_id):
         flash("Please log in to access this page.", "error")
         return redirect(url_for("login"))
 
-    print(f"[DEBUG] User ID: {session.get('user_id')}")
-
     topic = db.session.get(Topic, topic_id)
     if not topic:
         flash("Topic not found.", "error")
-        print(f"[DEBUG] Topic ID {topic_id} not found.")
         return redirect(url_for("dashboard"))
 
     progress = Progress.query.filter_by(user_id=session["user_id"], topic_id=topic_id).first()
     if not progress:
-        print(f"[DEBUG] No progress found for topic ID {topic_id}, creating new progress.")
         progress = Progress(user_id=session["user_id"], topic_id=topic_id, score=0, learned_words="")
         db.session.add(progress)
         db.session.commit()
 
     learned_words = progress.learned_words.split(",") if progress.learned_words else []
-    print(f"[DEBUG] Learned words for topic {topic_id}: {learned_words}")
 
     try:
         response = openai.ChatCompletion.create(
@@ -147,7 +137,6 @@ def study(topic_id):
         )
 
         generated_text = response['choices'][0]['message']['content']
-        print(f"[DEBUG] Generated text from OpenAI: {generated_text}")
 
         new_words = process_generated_words(generated_text, topic_id, learned_words)
 
@@ -157,14 +146,12 @@ def study(topic_id):
     except Exception as e:
         db.session.rollback()
         flash(f"Error generating words: {e}", "error")
-        print(f"[ERROR] Exception during word generation: {e}")
         return redirect(url_for("dashboard"))
 
     words = Word.query.filter(Word.topic_id == topic_id, ~Word.word.in_(learned_words)).limit(10).all()
 
     if not words:
         flash("No new words available for this topic. You’ve learned everything!", "success")
-        print(f"[DEBUG] No new words available for topic ID {topic_id}.")
         return redirect(url_for("dashboard"))
 
     return render_template("study.html", topic=topic, words=words)
@@ -219,6 +206,7 @@ def test(topic_id):
 
     return render_template("test.html", topic=topic, test_data=test_data)
 
+
 def process_generated_words(generated_text, topic_id, learned_words):
     new_words = []
     for word_info in generated_text.strip().split('\n'):
@@ -240,19 +228,7 @@ def parse_word_info(word_info):
             raise ValueError(f"Invalid format: {word_info}")
         return parts[0], parts[1], parts[2]
     except Exception as e:
-        print(f"Error parsing word info: {e}")
         return None, None, None
-
-
-def generate_test_data(words, topic_id):
-    test_data = []
-    for word in words:
-        options = [word.translation]
-        incorrect_translations = Word.query.filter(Word.id != word.id, Word.topic_id == topic_id).limit(3).all()
-        options += [incorrect.translation for incorrect in incorrect_translations]
-        random.shuffle(options)
-        test_data.append({"id": word.id, "word": word.word, "options": options})
-    return test_data
 
 
 if __name__ == "__main__":
