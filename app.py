@@ -133,10 +133,10 @@ def study(topic_id):
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "You are a helpful Spanish language tutor."},
+                    {"role": "system", "content": "You are a helpful language tutor."},
                     {"role": "user",
-                     "content": f"Generate 10 unique Spanish words related to the topic '{topic.name}' that are not already learned: {learned_words}. "
-                                "Each line should follow this format: Russian translation (English word) - Spanish word - example sentence. "
+                     "content": f"Generate 10 unique Spanish words related to the topic '{topic.name}' with Russian translations. "
+                                "Each line should follow this format: Russian translation (English word) - Spanish word - example sentence in Spanish. "
                                 f"Do not include any words from this list: {learned_words}."}
                 ]
             )
@@ -303,16 +303,17 @@ def process_generated_words(generated_text, topic_id, learned_words):
     """
     new_words = []
     for word_info in generated_text.strip().split('\n'):
+        # Разбираем строку формата: "русский перевод (английское слово) - испанское слово - пример"
         word, translation, context = parse_word_info(word_info)
+
+        # Проверяем, что слово не в изученных и не существует в базе данных
         if word and word not in learned_words and not Word.query.filter_by(word=word, topic_id=topic_id).first():
-            # Проверка уникальности и сохранение нового слова
             new_word = Word(word=word, translation=translation, context=context, topic_id=topic_id)
             db.session.add(new_word)
             new_words.append(new_word)
 
     db.session.commit()
     return new_words
-
 def parse_word_info(word_info):
     """
     Разбирает строку формата: 'Русский перевод (Английское слово) - Испанское слово - Пример предложения'
