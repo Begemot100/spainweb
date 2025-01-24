@@ -68,7 +68,6 @@ h2 {
     box-shadow: 0 2px 5px rgba(0, 122, 255, 0.2);
 }
 
-/* Карточки прогресса */
 .progress-container {
     margin-top: 20px;
     display: grid;
@@ -97,7 +96,6 @@ h2 {
     color: #666;
 }
 
-/* Список слов */
 .word-list {
     display: flex;
     flex-wrap: wrap;
@@ -112,7 +110,6 @@ h2 {
     font-size: 14px;
     text-transform: capitalize;
 }
-
 /* Вопросы теста */
 .question {
     margin-bottom: 30px;
@@ -228,8 +225,8 @@ h2 {
     transform: translateY(0);
     box-shadow: 0 4px 10px rgba(0, 122, 255, 0.2);
 }
-
 .questions-grid {
+
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 20px;
@@ -240,6 +237,7 @@ input[type="radio"]:checked + label {
     color: #fff;
     border-color: #007BFF;
 }
+
 
 /* Адаптация для маленьких экранов */
 @media (max-width: 768px) {
