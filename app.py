@@ -398,7 +398,7 @@ def grammar_test(lesson_id):
             return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
 
         return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
-
+    
 if __name__ == "__main__":
     with app.app_context():
         print("Creating tables...")
