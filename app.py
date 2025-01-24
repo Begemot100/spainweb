@@ -349,8 +349,10 @@ def grammar():
 
 @app.route("/grammar/<int:lesson_id>")
 def grammar_lesson(lesson_id):
-    if lesson_id == 1:  # Урок по Ser vs Estar
+    # Данные урока Ser и Estar
+    if lesson_id == 1:
         lesson = {
+            "id": lesson_id,  # Добавляем ID урока для использования в шаблоне
             "title": "Глаголы Ser и Estar",
             "content": """
                 Глаголы <strong>ser</strong> и <strong>estar</strong> переводятся как "быть", но используются в разных ситуациях.
@@ -377,9 +379,11 @@ def grammar_lesson(lesson_id):
             ]
         }
         return render_template("grammar_lesson.html", lesson=lesson)
+
+    # Обработка других уроков (если будут добавлены в будущем)
     else:
         flash("Lesson not found.", "error")
-        return redirect(url_for("grammar"))
+        return redirect(url_for("dashboard"))
 
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
