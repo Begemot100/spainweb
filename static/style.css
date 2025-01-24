@@ -261,10 +261,4 @@ input[type="radio"]:checked + label {
 @media (max-width: 375px) {
     h1, h2 {
         font-size: 1.2em;
-    }
-
-    .btn {
-        padding: 6px;
-        font-size: 0.9em;
-    }
-}
+   
