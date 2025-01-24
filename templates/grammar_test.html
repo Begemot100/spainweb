@@ -1,19 +1,20 @@
 <div class="container">
     <h1>Тест: {{ lesson_title }}</h1>
-    <form method="POST">
-        {% for i, question in enumerate(questions) %}
-        <div class="question">
-            <p><strong>{{ question.question }}</strong></p>
-            <div class="options">
+        <form method="POST">
+        {% for question in questions %}
+        <div class="mb-4">
+            <p><strong>{{ loop.index }}. {{ question.question }}</strong></p> <!-- Используйте loop.index -->
+            <ul>
                 {% for option in question.options %}
-                <label>
-                    <input type="radio" name="question-{{ i }}" value="{{ option }}" required> {{ option }}
-                </label>
+                <li>
+                    <input type="radio" id="q{{ loop.index }}_{{ loop.index0 }}" name="question-{{ loop.index0 }}" value="{{ option }}">
+                    <label for="q{{ loop.index }}_{{ loop.index0 }}">{{ option }}</label>
+                </li>
                 {% endfor %}
-            </div>
+            </ul>
         </div>
         {% endfor %}
-        <button type="submit" class="btn-submit">Отправить</button>
+        <button type="submit" class="btn btn-primary">Отправить ответы</button>
     </form>
 </div>
 
