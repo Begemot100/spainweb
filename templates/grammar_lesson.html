@@ -4,92 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ lesson.title }}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5">
         <h1>{{ lesson.title }}</h1>
         <div class="lesson-content">
             <p>{{ lesson.content | safe }}</p>
-            <h2>Формы глагола Ser:</h2>
-            <table class="conjugation-table">
-                <thead>
-                    <tr>
-                        <th>Время</th>
-                        <th>Yo</th>
-                        <th>Tú</th>
-                        <th>Él/Ella/Usted</th>
-                        <th>Nosotros</th>
-                        <th>Vosotros</th>
-                        <th>Ellos/Ellas/Ustedes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Presente</td>
-                        {% for form in lesson.ser_conjugations["Presente"] %}
-                        <td>{{ form }}</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>Pretérito</td>
-                        {% for form in lesson.ser_conjugations["Pretérito"] %}
-                        <td>{{ form }}</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>Futuro</td>
-                        {% for form in lesson.ser_conjugations["Futuro"] %}
-                        <td>{{ form }}</td>
-                        {% endfor %}
-                    </tr>
-                </tbody>
-            </table>
-
-            <h2>Формы глагола Estar:</h2>
-            <table class="conjugation-table">
-                <thead>
-                    <tr>
-                        <th>Время</th>
-                        <th>Yo</th>
-                        <th>Tú</th>
-                        <th>Él/Ella/Usted</th>
-                        <th>Nosotros</th>
-                        <th>Vosotros</th>
-                        <th>Ellos/Ellas/Ustedes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Presente</td>
-                        {% for form in lesson.estar_conjugations["Presente"] %}
-                        <td>{{ form }}</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>Pretérito</td>
-                        {% for form in lesson.estar_conjugations["Pretérito"] %}
-                        <td>{{ form }}</td>
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td>Futuro</td>
-                        {% for form in lesson.estar_conjugations["Futuro"] %}
-                        <td>{{ form }}</td>
-                        {% endfor %}
-                    </tr>
-                </tbody>
-            </table>
-
-            <h2>Примеры:</h2>
-            <ul>
-                {% for example in lesson.examples %}
-                <li><strong>{{ example.sentence }}</strong> - {{ example.translation }}</li>
-                {% endfor %}
-            </ul>
-
-            <a href="/grammar/test/1" class="btn">Пройти тест</a>
         </div>
+
+        <h2>Формы глагола Ser:</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Время</th>
+                    <th>Yo</th>
+                    <th>Tú</th>
+                    <th>Él/Ella/Usted</th>
+                    <th>Nosotros</th>
+                    <th>Vosotros</th>
+                    <th>Ellos/Ellas/Ustedes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Presente</td>
+                    {% for form in lesson.ser_conjugations["Presente"] %}
+                    <td>{{ form }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Pretérito</td>
+                    {% for form in lesson.ser_conjugations["Pretérito"] %}
+                    <td>{{ form }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Futuro</td>
+                    {% for form in lesson.ser_conjugations["Futuro"] %}
+                    <td>{{ form }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Формы глагола Estar:</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Время</th>
+                    <th>Yo</th>
+                    <th>Tú</th>
+                    <th>Él/Ella/Usted</th>
+                    <th>Nosotros</th>
+                    <th>Vosotros</th>
+                    <th>Ellos/Ellas/Ustedes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Presente</td>
+                    {% for form in lesson.estar_conjugations["Presente"] %}
+                    <td>{{ form }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Pretérito</td>
+                    {% for form in lesson.estar_conjugations["Pretérito"] %}
+                    <td>{{ form }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>Futuro</td>
+                    {% for form in lesson.estar_conjugations["Futuro"] %}
+                    <td>{{ form }}</td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Примеры:</h2>
+        <ul>
+            {% for example in lesson.examples %}
+            <li><strong>{{ example.sentence }}</strong> - {{ example.translation }}</li>
+            {% endfor %}
+        </ul>
+
+        <a href="/grammar" class="btn btn-primary mt-3">Вернуться к грамматике</a>
     </div>
 </body>
 </html>
