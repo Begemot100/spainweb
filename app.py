@@ -136,7 +136,7 @@ def study(topic_id):
                     {"role": "system", "content": "You are a helpful Spanish language tutor."},
                     {"role": "user",
                      "content": f"Generate 10 unique Spanish words related to the topic '{topic.name}' that are not already learned: {learned_words}. "
-                                "Each line should follow this format: word - translation - example sentence."}
+                                "Each line should follow this format: Russian translation (English word) - Spanish word - example sentence."}
                 ]
             )
 
@@ -315,14 +315,30 @@ def process_generated_words(generated_text, topic_id, learned_words):
     return new_words
 
 def parse_word_info(word_info):
+    """
+    Разбирает строку формата: 'Русский перевод (Английское слово) - Испанское слово - Пример предложения'
+    """
     try:
         parts = [part.strip() for part in word_info.split('-')]
         if len(parts) < 3:
             raise ValueError(f"Invalid format: {word_info}")
-        return parts[0], parts[1], parts[2]
-    except Exception as e:
-        return None, None, None
 
+        # Извлекаем русский перевод и английский оригинал из первой части
+        translation_part = parts[0]
+        if '(' in translation_part and ')' in translation_part:
+            translation, original = translation_part.split('(')
+            translation = translation.strip()
+            original = original.strip(') ')
+        else:
+            raise ValueError(f"Invalid format for translation and original: {translation_part}")
+
+        spanish_word = parts[1]
+        context = parts[2]
+
+        return f"{translation} ({original})", spanish_word, context
+    except Exception as e:
+        print(f"Error parsing word info: {e}")
+        return None, None, None
 
 if __name__ == "__main__":
     with app.app_context():
