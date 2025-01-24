@@ -441,7 +441,7 @@ def grammar_test(lesson_id):
     else:
         flash("Тест не найден.", "error")
         return redirect(url_for("grammar"))
-    
+
 if __name__ == "__main__":
     with app.app_context():
         print("Creating tables...")

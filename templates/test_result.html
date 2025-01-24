@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Результат теста</title>
+    <title>Результаты теста</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5 text-center">
-        <h1>Результат теста</h1>
-        <p>Ваш результат: <strong>{{ score }}%</strong></p>
-        <p>Правильных ответов: <strong>{{ correct }}/{{ total }}</strong></p>
+    <div class="container mt-5">
+        <h1>Результаты теста</h1>
+        <p><strong>Ваш результат:</strong> {{ score }}%</p>
+        <p><strong>Правильных ответов:</strong> {{ correct }} из {{ total }}</p>
 
-        {% if success %}
-        <div class="alert alert-success">Вы успешно прошли тест!</div>
+        {% if score >= 80 %}
+        <p class="text-success">Поздравляем! Вы успешно прошли тест.</p>
         {% else %}
-        <div class="alert alert-danger">Вы не набрали достаточно баллов для прохождения теста. Попробуйте снова.</div>
+        <p class="text-danger">Вы не набрали достаточно баллов для прохождения теста. Попробуйте снова.</p>
         {% endif %}
 
         <a href="/grammar/1" class="btn btn-primary mt-3">Вернуться к уроку</a>
