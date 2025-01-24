@@ -347,44 +347,58 @@ def grammar():
     ]
     return render_template("grammar.html", lessons=lessons)
 
-@app.route("/grammar/<int:lesson_id>")
-def grammar_lesson(lesson_id):
-    # Данные урока Ser и Estar
+@app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
+def grammar_test(lesson_id):
     if lesson_id == 1:
-        lesson = {
-            "id": lesson_id,  # Добавляем ID урока для использования в шаблоне
-            "title": "Глаголы Ser и Estar",
-            "content": """
-                Глаголы <strong>ser</strong> и <strong>estar</strong> переводятся как "быть", но используются в разных ситуациях.
-                <ul>
-                    <li><strong>Ser</strong>: используется для постоянных характеристик, профессий, времени, происхождения.</li>
-                    <li><strong>Estar</strong>: используется для временных состояний, эмоций и местоположения.</li>
-                </ul>
-            """,
-            "ser_conjugations": {
-                "Presente": ["soy", "eres", "es", "somos", "sois", "son"],
-                "Pretérito": ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"],
-                "Futuro": ["seré", "serás", "será", "seremos", "seréis", "serán"]
+        questions = [
+            {
+                "id": 1,
+                "question": "¿Quién es el profesor?",
+                "translation": "Кто учитель?",  # Перевод на русский
+                "options": ["ser", "estar", "tener", "hacer"],
+                "answer": "ser"
             },
-            "estar_conjugations": {
-                "Presente": ["estoy", "estás", "está", "estamos", "estáis", "están"],
-                "Pretérito": ["estuve", "estuviste", "estuvo", "estuvimos", "estuvisteis", "estuvieron"],
-                "Futuro": ["estaré", "estarás", "estará", "estaremos", "estaréis", "estarán"]
+            {
+                "id": 2,
+                "question": "¿Dónde está el libro?",
+                "translation": "Где находится книга?",  # Перевод на русский
+                "options": ["ser", "estar", "tener", "hacer"],
+                "answer": "estar"
             },
-            "examples": [
-                {"sentence": "Yo soy estudiante.", "translation": "Я студент."},
-                {"sentence": "Ella está cansada.", "translation": "Она устала."},
-                {"sentence": "El libro está en la mesa.", "translation": "Книга на столе."},
-                {"sentence": "Nosotros somos de España.", "translation": "Мы из Испании."},
-            ]
-        }
-        return render_template("grammar_lesson.html", lesson=lesson)
+            {
+                "id": 3,
+                "question": "¿De dónde somos?",
+                "translation": "Откуда мы?",  # Перевод на русский
+                "options": ["ser", "estar", "tener", "hacer"],
+                "answer": "ser"
+            },
+            {
+                "id": 4,
+                "question": "¿Cómo está ella?",
+                "translation": "Как она себя чувствует?",  # Перевод на русский
+                "options": ["ser", "estar", "tener", "hacer"],
+                "answer": "estar"
+            }
+        ]
 
-    # Обработка других уроков (если будут добавлены в будущем)
+        if request.method == "POST":
+            user_answers = request.form
+            correct_answers = sum(1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"])
+            score = (correct_answers / len(questions)) * 100
+
+            # Обновление прогресса, если более 80% правильных ответов
+            if score >= 80:
+                flash(f"Поздравляем! Вы успешно прошли тест с результатом {score:.2f}%.", "success")
+                # Здесь можно обновить прогресс в базе данных
+            else:
+                flash(f"Ваш результат {score:.2f}%. Попробуйте снова.", "warning")
+
+            return redirect(url_for("grammar_lesson", lesson_id=lesson_id))
+
+        return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
     else:
-        flash("Lesson not found.", "error")
-        return redirect(url_for("dashboard"))
-
+        flash("Тест не найден.", "error")
+        return redirect(url_for("grammar"))
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
     if lesson_id == 1:
