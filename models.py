@@ -21,7 +21,6 @@ class Progress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=True)
-    learned_words = db.Column(db.Text, nullable=False)
-    score = db.Column(db.Float, nullable=False)
+    learned_words = db.Column(db.String, nullable=True)
+    score = db.Column(db.Float, default=0.0)
     grammar_lesson_id = db.Column(db.Integer, nullable=True)
-

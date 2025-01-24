@@ -409,18 +409,26 @@ def grammar_test(lesson_id):
             correct_answers = sum(1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"])
             score = (correct_answers / len(questions)) * 100
 
+            # Сохранение прогресса
+            progress = Progress.query.filter_by(user_id=session["user_id"], grammar_lesson_id=lesson_id).first()
+
+            if not progress:
+                # Новый прогресс
+                progress = Progress(
+                    user_id=session["user_id"],
+                    topic_id=None,  # Для грамматического урока topic_id отсутствует
+                    grammar_lesson_id=lesson_id,
+                    score=score
+                )
+                db.session.add(progress)
+            else:
+                # Обновление существующего прогресса
+                progress.score = max(progress.score, score)
+
+            db.session.commit()
+
+            # Вывод результата пользователю
             if score >= 80:
-                # Проверяем, существует ли прогресс по этому уроку
-                progress = Progress.query.filter_by(user_id=session["user_id"], grammar_lesson_id=lesson_id).first()
-
-                if not progress:
-                    progress = Progress(user_id=session["user_id"], grammar_lesson_id=lesson_id, score=score)
-                    db.session.add(progress)
-                else:
-                    progress.score = max(progress.score, score)  # Обновляем прогресс, если текущий результат лучше
-
-                db.session.commit()
-
                 flash("Поздравляем! Вы успешно прошли тест.", "success")
             else:
                 flash("К сожалению, вы не набрали минимальный балл.", "error")
@@ -428,9 +436,7 @@ def grammar_test(lesson_id):
             return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
 
         return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
-    else:
-        flash("Тест не найден.", "error")
-        return redirect(url_for("grammar"))
+
 
 if __name__ == "__main__":
     with app.app_context():
