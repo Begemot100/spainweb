@@ -340,7 +340,12 @@ def parse_word_info(word_info):
         print(f"Error parsing word info: {e}")
         return None, None, None
 
-
+@app.route("/grammar")
+def grammar():
+    lessons = [
+        {"id": 1, "title": "Ser vs Estar", "description": "Урок о различиях между глаголами ser и estar."}
+    ]
+    return render_template("grammar.html", lessons=lessons)
 
 @app.route("/grammar/<int:lesson_id>")
 def grammar_lesson(lesson_id):
