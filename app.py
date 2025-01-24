@@ -393,12 +393,15 @@ def grammar_test(lesson_id):
 
         if request.method == "POST":
             user_answers = request.form
-            correct_answers = sum(1 for i, q in enumerate(questions) if user_answers.get(f"question-{i}") == q["answer"])
+            correct_answers = sum(
+                1 for i, q in enumerate(questions) if user_answers.get(f"question-{i}") == q["answer"]
+            )
             score = (correct_answers / len(questions)) * 100
             return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
 
         return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
-    
+
+
 if __name__ == "__main__":
     with app.app_context():
         print("Creating tables...")
