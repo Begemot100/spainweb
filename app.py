@@ -347,6 +347,44 @@ def grammar():
     ]
     return render_template("grammar.html", lessons=lessons)
 
+@app.route("/grammar/<int:lesson_id>")
+def grammar_lesson(lesson_id):
+    # Данные урока Ser и Estar
+    if lesson_id == 1:
+        lesson = {
+            "id": lesson_id,  # Добавляем ID урока для использования в шаблоне
+            "title": "Глаголы Ser и Estar",
+            "content": """
+                Глаголы <strong>ser</strong> и <strong>estar</strong> переводятся как "быть", но используются в разных ситуациях.
+                <ul>
+                    <li><strong>Ser</strong>: используется для постоянных характеристик, профессий, времени, происхождения.</li>
+                    <li><strong>Estar</strong>: используется для временных состояний, эмоций и местоположения.</li>
+                </ul>
+            """,
+            "ser_conjugations": {
+                "Presente": ["soy", "eres", "es", "somos", "sois", "son"],
+                "Pretérito": ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"],
+                "Futuro": ["seré", "serás", "será", "seremos", "seréis", "serán"]
+            },
+            "estar_conjugations": {
+                "Presente": ["estoy", "estás", "está", "estamos", "estáis", "están"],
+                "Pretérito": ["estuve", "estuviste", "estuvo", "estuvimos", "estuvisteis", "estuvieron"],
+                "Futuro": ["estaré", "estarás", "estará", "estaremos", "estaréis", "estarán"]
+            },
+            "examples": [
+                {"sentence": "Yo soy estudiante.", "translation": "Я студент."},
+                {"sentence": "Ella está cansada.", "translation": "Она устала."},
+                {"sentence": "El libro está en la mesa.", "translation": "Книга на столе."},
+                {"sentence": "Nosotros somos de España.", "translation": "Мы из Испании."},
+            ]
+        }
+        return render_template("grammar_lesson.html", lesson=lesson)
+
+    # Обработка других уроков (если будут добавлены в будущем)
+    else:
+        flash("Lesson not found.", "error")
+        return redirect(url_for("dashboard"))
+
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
     if lesson_id == 1:
@@ -399,47 +437,7 @@ def grammar_test(lesson_id):
     else:
         flash("Тест не найден.", "error")
         return redirect(url_for("grammar"))
-@app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
-def grammar_test(lesson_id):
-    if lesson_id == 1:
-        # Вопросы и варианты ответов
-        questions = [
-            {"id": 1, "question": "¿Quién es el profesor?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
-            {"id": 2, "question": "¿Dónde está el libro?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
-            {"id": 3, "question": "¿De dónde somos?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
-            {"id": 4, "question": "¿Por qué estás cansado?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
-        ]
-
-        if request.method == "POST":
-            # Получение ответов пользователя
-            user_answers = request.form
-            correct_answers = sum(
-                1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"]
-            )
-            score = (correct_answers / len(questions)) * 100
-
-            # Если результат ≥ 80%, обновляем прогресс
-            if score >= 80:
-                user_id = session.get("user_id")
-                if user_id:
-                    progress = Progress.query.filter_by(user_id=user_id, topic_id=lesson_id).first()
-                    if not progress:
-                        progress = Progress(user_id=user_id, topic_id=lesson_id, score=score)
-                        db.session.add(progress)
-                    else:
-                        progress.score = max(progress.score, score)
-                    db.session.commit()
-
-            return render_template(
-                "test_result.html",
-                score=score,
-                total=len(questions),
-                correct=correct_answers,
-                success=score >= 80
-            )
-
-        return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
-
+    
 if __name__ == "__main__":
     with app.app_context():
         print("Creating tables...")
