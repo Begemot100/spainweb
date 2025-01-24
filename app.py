@@ -136,7 +136,8 @@ def study(topic_id):
                     {"role": "system", "content": "You are a helpful Spanish language tutor."},
                     {"role": "user",
                      "content": f"Generate 10 unique Spanish words related to the topic '{topic.name}' that are not already learned: {learned_words}. "
-                                "Each line should follow this format: Russian translation (English word) - Spanish word - example sentence."}
+                                "Each line should follow this format: Russian translation (English word) - Spanish word - example sentence. "
+                                f"Do not include any words from this list: {learned_words}."}
                 ]
             )
 
@@ -169,7 +170,6 @@ def study(topic_id):
         return redirect(url_for("dashboard"))
 
     return render_template("study.html", topic=topic, words=new_words)
-
 
 @app.route("/test/<int:topic_id>", methods=["GET", "POST"])
 def test(topic_id):
@@ -305,12 +305,11 @@ def process_generated_words(generated_text, topic_id, learned_words):
     for word_info in generated_text.strip().split('\n'):
         word, translation, context = parse_word_info(word_info)
         if word and word not in learned_words and not Word.query.filter_by(word=word, topic_id=topic_id).first():
+            # Проверка уникальности и сохранение нового слова
             new_word = Word(word=word, translation=translation, context=context, topic_id=topic_id)
             db.session.add(new_word)
             new_words.append(new_word)
 
-        if len(new_words) == 10:  # Останавливаемся, если добавлено 10 слов
-            break
     db.session.commit()
     return new_words
 
