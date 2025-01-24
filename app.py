@@ -89,6 +89,7 @@ def dashboard():
     topics = Topic.query.all()
     user_id = session["user_id"]
 
+    # Прогресс по словам
     progress_list = [
         {
             "topic_id": topic.id,
@@ -104,9 +105,17 @@ def dashboard():
         if (progress := Progress.query.filter_by(user_id=user_id, topic_id=topic.id).first())
     ]
 
-    return render_template("dashboard.html", topics=topics, progress_list=progress_list)
+    # Прогресс по грамматике
+    grammar_progress = [
+        {
+            "lesson_id": progress.grammar_lesson_id,
+            "lesson_title": "Ser vs Estar",  # Название урока можно динамически изменять
+            "score": progress.score
+        }
+        for progress in Progress.query.filter(Progress.user_id == user_id, Progress.grammar_lesson_id.isnot(None)).all()
+    ]
 
-
+    return render_template("dashboard.html", topics=topics, progress_list=progress_list, grammar_progress=grammar_progress)
 @app.route("/study/<int:topic_id>")
 def study(topic_id):
     if "user_id" not in session:
@@ -387,36 +396,12 @@ def grammar_lesson(lesson_id):
 
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
-    if lesson_id == 1:  # Тест по уроку Ser vs Estar
+    if lesson_id == 1:
         questions = [
-            {
-                "id": 1,
-                "question": "¿Quién es el profesor?",
-                "translation": "Кто учитель?",
-                "options": ["ser", "estar", "tener", "hacer"],
-                "answer": "ser"
-            },
-            {
-                "id": 2,
-                "question": "¿Dónde está el libro?",
-                "translation": "Где находится книга?",
-                "options": ["ser", "estar", "tener", "hacer"],
-                "answer": "estar"
-            },
-            {
-                "id": 3,
-                "question": "¿De dónde somos?",
-                "translation": "Откуда мы?",
-                "options": ["ser", "estar", "tener", "hacer"],
-                "answer": "ser"
-            },
-            {
-                "id": 4,
-                "question": "¿Cómo está ella?",
-                "translation": "Как она себя чувствует?",
-                "options": ["ser", "estar", "tener", "hacer"],
-                "answer": "estar"
-            }
+            {"id": 1, "question": "¿Quién es el profesor?", "translation": "Кто учитель?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
+            {"id": 2, "question": "¿Dónde está el libro?", "translation": "Где находится книга?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
+            {"id": 3, "question": "¿De dónde somos?", "translation": "Откуда мы?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
+            {"id": 4, "question": "¿Cómo está ella?", "translation": "Как она себя чувствует?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
         ]
 
         if request.method == "POST":
@@ -424,19 +409,24 @@ def grammar_test(lesson_id):
             correct_answers = sum(1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"])
             score = (correct_answers / len(questions)) * 100
 
-            # Проверка результата
             if score >= 80:
-                flash(f"Поздравляем! Вы успешно прошли тест с результатом {score:.2f}%.", "success")
-                # Здесь можно добавить логику обновления прогресса в базе данных
+                # Проверяем, существует ли прогресс по этому уроку
+                progress = Progress.query.filter_by(user_id=session["user_id"], grammar_lesson_id=lesson_id).first()
+
+                if not progress:
+                    progress = Progress(user_id=session["user_id"], grammar_lesson_id=lesson_id, score=score)
+                    db.session.add(progress)
+                else:
+                    progress.score = max(progress.score, score)  # Обновляем прогресс, если текущий результат лучше
+
+                db.session.commit()
+
+                flash("Поздравляем! Вы успешно прошли тест.", "success")
             else:
-                flash(f"Ваш результат {score:.2f}%. Попробуйте снова.", "warning")
+                flash("К сожалению, вы не набрали минимальный балл.", "error")
 
-            # Переход на страницу результатов
-            return render_template(
-                "test_result.html", score=score, total=len(questions), correct=correct_answers
-            )
+            return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
 
-        # Рендеринг страницы теста
         return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
     else:
         flash("Тест не найден.", "error")
