@@ -387,33 +387,33 @@ def grammar_lesson(lesson_id):
 
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
-    if lesson_id == 1:
+    if lesson_id == 1:  # Тест по уроку Ser vs Estar
         questions = [
             {
                 "id": 1,
                 "question": "¿Quién es el profesor?",
-                "translation": "Кто учитель?",  # Перевод на русский
+                "translation": "Кто учитель?",
                 "options": ["ser", "estar", "tener", "hacer"],
                 "answer": "ser"
             },
             {
                 "id": 2,
                 "question": "¿Dónde está el libro?",
-                "translation": "Где находится книга?",  # Перевод на русский
+                "translation": "Где находится книга?",
                 "options": ["ser", "estar", "tener", "hacer"],
                 "answer": "estar"
             },
             {
                 "id": 3,
                 "question": "¿De dónde somos?",
-                "translation": "Откуда мы?",  # Перевод на русский
+                "translation": "Откуда мы?",
                 "options": ["ser", "estar", "tener", "hacer"],
                 "answer": "ser"
             },
             {
                 "id": 4,
                 "question": "¿Cómo está ella?",
-                "translation": "Как она себя чувствует?",  # Перевод на русский
+                "translation": "Как она себя чувствует?",
                 "options": ["ser", "estar", "tener", "hacer"],
                 "answer": "estar"
             }
@@ -424,15 +424,19 @@ def grammar_test(lesson_id):
             correct_answers = sum(1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"])
             score = (correct_answers / len(questions)) * 100
 
-            # Обновление прогресса, если более 80% правильных ответов
+            # Проверка результата
             if score >= 80:
                 flash(f"Поздравляем! Вы успешно прошли тест с результатом {score:.2f}%.", "success")
-                # Здесь можно обновить прогресс в базе данных
+                # Здесь можно добавить логику обновления прогресса в базе данных
             else:
                 flash(f"Ваш результат {score:.2f}%. Попробуйте снова.", "warning")
 
-            return redirect(url_for("grammar_lesson", lesson_id=lesson_id))
+            # Переход на страницу результатов
+            return render_template(
+                "test_result.html", score=score, total=len(questions), correct=correct_answers
+            )
 
+        # Рендеринг страницы теста
         return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
     else:
         flash("Тест не найден.", "error")
