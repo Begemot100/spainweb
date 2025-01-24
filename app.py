@@ -127,20 +127,25 @@ def study(topic_id):
     learned_words = progress.learned_words.split(",") if progress.learned_words else []
 
     try:
+        # Генерация новых слов с OpenAI
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful Spanish language tutor."},
                 {"role": "user",
-                 "content": f"Generate 10 unique Spanish words related to the topic '{topic.name}' that are not already learned: {learned_words}. Each line should follow this format: word - translation - example sentence."}
+                 "content": f"Generate 10 unique Spanish words related to the topic '{topic.name}' that are not already learned: {learned_words}. "
+                            "Each line should follow this format: word - translation - example sentence."}
             ]
         )
 
         generated_text = response['choices'][0]['message']['content']
 
+        # Обработка сгенерированных слов
         new_words = process_generated_words(generated_text, topic_id, learned_words)
 
-        progress.learned_words = ",".join(set(learned_words + [word.word for word in new_words]))
+        # Обновление изученных слов
+        learned_words += [word.word for word in new_words]
+        progress.learned_words = ",".join(set(learned_words))
         db.session.commit()
 
     except Exception as e:
@@ -148,13 +153,14 @@ def study(topic_id):
         flash(f"Error generating words: {e}", "error")
         return redirect(url_for("dashboard"))
 
-    words = Word.query.filter(Word.topic_id == topic_id, ~Word.word.in_(learned_words)).limit(10).all()
+    words = new_words  # Отображаем только недавно добавленные слова
 
     if not words:
         flash("No new words available for this topic. You’ve learned everything!", "success")
         return redirect(url_for("dashboard"))
 
     return render_template("study.html", topic=topic, words=words)
+
 
 
 @app.route("/test/<int:topic_id>", methods=["GET", "POST"])
@@ -284,18 +290,21 @@ def repeat_test(topic_id):
     return render_template("test.html", topic=topic, test_data=test_data)
 
 def process_generated_words(generated_text, topic_id, learned_words):
+    """
+    Обрабатывает текст, сгенерированный OpenAI, добавляя только уникальные слова.
+    """
     new_words = []
     for word_info in generated_text.strip().split('\n'):
         word, translation, context = parse_word_info(word_info)
-        if word and word not in learned_words and not Word.query.filter_by(word=word).first():
+        if word and word not in learned_words and not Word.query.filter_by(word=word, topic_id=topic_id).first():
             new_word = Word(word=word, translation=translation, context=context, topic_id=topic_id)
             db.session.add(new_word)
             new_words.append(new_word)
 
-        if len(new_words) == 10:
+        if len(new_words) == 10:  # Останавливаемся, если добавлено 10 слов
             break
+    db.session.commit()
     return new_words
-
 
 def parse_word_info(word_info):
     try:
