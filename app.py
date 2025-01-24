@@ -388,23 +388,43 @@ def grammar_lesson(lesson_id):
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
     if lesson_id == 1:
+        # Вопросы и варианты ответов
         questions = [
-            {"question": "Он учитель. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "ser"},
-            {"question": "Она устала. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "estar"},
-            {"question": "Мы из Испании. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "ser"},
-            {"question": "Книга на столе. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "estar"},
+            {"id": 1, "question": "¿Quién es el profesor?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
+            {"id": 2, "question": "¿Dónde está el libro?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
+            {"id": 3, "question": "¿De dónde somos?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
+            {"id": 4, "question": "¿Por qué estás cansado?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
         ]
 
         if request.method == "POST":
+            # Получение ответов пользователя
             user_answers = request.form
             correct_answers = sum(
-                1 for i, q in enumerate(questions) if user_answers.get(f"question-{i}") == q["answer"]
+                1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"]
             )
             score = (correct_answers / len(questions)) * 100
-            return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
+
+            # Если результат ≥ 80%, обновляем прогресс
+            if score >= 80:
+                user_id = session.get("user_id")
+                if user_id:
+                    progress = Progress.query.filter_by(user_id=user_id, topic_id=lesson_id).first()
+                    if not progress:
+                        progress = Progress(user_id=user_id, topic_id=lesson_id, score=score)
+                        db.session.add(progress)
+                    else:
+                        progress.score = max(progress.score, score)
+                    db.session.commit()
+
+            return render_template(
+                "test_result.html",
+                score=score,
+                total=len(questions),
+                correct=correct_answers,
+                success=score >= 80
+            )
 
         return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
-
 
 if __name__ == "__main__":
     with app.app_context():
