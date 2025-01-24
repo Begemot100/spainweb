@@ -340,6 +340,60 @@ def parse_word_info(word_info):
         print(f"Error parsing word info: {e}")
         return None, None, None
 
+
+
+@app.route("/grammar/<int:lesson_id>")
+def grammar_lesson(lesson_id):
+    if lesson_id == 1:  # Урок по Ser vs Estar
+        lesson = {
+            "title": "Глаголы Ser и Estar",
+            "content": """
+                Глаголы <strong>ser</strong> и <strong>estar</strong> переводятся как "быть", но используются в разных ситуациях.
+                <ul>
+                    <li><strong>Ser</strong>: используется для постоянных характеристик, профессий, времени, происхождения.</li>
+                    <li><strong>Estar</strong>: используется для временных состояний, эмоций и местоположения.</li>
+                </ul>
+            """,
+            "ser_conjugations": {
+                "Presente": ["soy", "eres", "es", "somos", "sois", "son"],
+                "Pretérito": ["fui", "fuiste", "fue", "fuimos", "fuisteis", "fueron"],
+                "Futuro": ["seré", "serás", "será", "seremos", "seréis", "serán"]
+            },
+            "estar_conjugations": {
+                "Presente": ["estoy", "estás", "está", "estamos", "estáis", "están"],
+                "Pretérito": ["estuve", "estuviste", "estuvo", "estuvimos", "estuvisteis", "estuvieron"],
+                "Futuro": ["estaré", "estarás", "estará", "estaremos", "estaréis", "estarán"]
+            },
+            "examples": [
+                {"sentence": "Yo soy estudiante.", "translation": "Я студент."},
+                {"sentence": "Ella está cansada.", "translation": "Она устала."},
+                {"sentence": "El libro está en la mesa.", "translation": "Книга на столе."},
+                {"sentence": "Nosotros somos de España.", "translation": "Мы из Испании."},
+            ]
+        }
+        return render_template("grammar_lesson.html", lesson=lesson)
+    else:
+        flash("Lesson not found.", "error")
+        return redirect(url_for("grammar"))
+
+@app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
+def grammar_test(lesson_id):
+    if lesson_id == 1:
+        questions = [
+            {"question": "Он учитель. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "ser"},
+            {"question": "Она устала. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "estar"},
+            {"question": "Мы из Испании. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "ser"},
+            {"question": "Книга на столе. Выберите правильный глагол.", "options": ["ser", "estar"], "answer": "estar"},
+        ]
+
+        if request.method == "POST":
+            user_answers = request.form
+            correct_answers = sum(1 for i, q in enumerate(questions) if user_answers.get(f"question-{i}") == q["answer"])
+            score = (correct_answers / len(questions)) * 100
+            return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
+
+        return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
+
 if __name__ == "__main__":
     with app.app_context():
         print("Creating tables...")
