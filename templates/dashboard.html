@@ -52,6 +52,28 @@
             background-color: #0056b3;
         }
 
+        .grammar-btn {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .grammar-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        .grammar-btn:active {
+            background-color: #1e7e34;
+        }
+
         .progress-container {
             margin-top: 20px;
         }
@@ -87,54 +109,6 @@
             margin-top: 10px;
         }
 
-        .word-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .word-tag {
-            padding: 5px 10px;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .word-tag:hover {
-            background-color: #0056b3;
-        }
-
-        .repeat-btn {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            color: #fff;
-            background-color: #007BFF;
-            border: none;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.4);
-        }
-
-        .repeat-btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 123, 255, 0.6);
-        }
-
-        .repeat-btn:active {
-            background-color: #003f7f;
-            transform: translateY(0);
-            box-shadow: 0 3px 6px rgba(0, 123, 255, 0.4);
-        }
-
         /* Адаптация для маленьких экранов */
         @media (max-width: 768px) {
             .container {
@@ -149,6 +123,10 @@
                 font-size: 1em;
                 padding: 8px;
             }
+
+            .grammar-btn {
+                font-size: 1em;
+            }
         }
 
         /* Адаптация для iPhone SE и аналогичных устройств */
@@ -159,6 +137,10 @@
 
             .btn {
                 padding: 6px;
+                font-size: 0.9em;
+            }
+
+            .grammar-btn {
                 font-size: 0.9em;
             }
         }
@@ -205,19 +187,20 @@
         {% else %}
         <p>No progress yet. Start studying to track your progress!</p>
         {% endif %}
+
+        <!-- Кнопка изучать грамматику -->
+        <a href="/grammar" class="grammar-btn">Изучать грамматику</a>
     </div>
 
     <script>
         // Функция для переключения между словом и переводом
         function toggleWord(event, element) {
-            // Останавливаем всплытие события, чтобы не закрывался блок
             event.stopPropagation();
 
             const currentText = element.textContent;
             const word = element.getAttribute('data-word');
             const translation = element.getAttribute('data-translation');
 
-            // Меняем текст между словом и переводом
             if (currentText === word) {
                 element.textContent = translation;
             } else {
@@ -232,15 +215,14 @@
 
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
-                icon.textContent = '−'; // Изменяем иконку на минус
+                icon.textContent = '−';
             } else {
                 content.style.display = 'none';
-                icon.textContent = '+'; // Изменяем иконку на плюс
+                icon.textContent = '+';
             }
         }
     </script>
 </body>
 </html>
-
 <!--new-->
 <!--y-->
