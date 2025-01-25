@@ -59,7 +59,11 @@
         <form method="POST" id="test-form">
             {% for question in questions %}
             <div class="mb-4">
-                <p><strong>{{ loop.index }}. {{ question.question }} <span class="text-muted">({{ question.translation }})</span></strong></p>
+                <p>
+                    <strong>{{ loop.index }}. {{ question.question }}
+                    <span class="text-muted">({{ question.translation }})</span>
+                    </strong>
+                </p>
                 <div>
                     {% for option in question.options %}
                     <button type="button" class="btn btn-outline-primary btn-option"

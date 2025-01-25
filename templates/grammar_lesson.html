@@ -68,7 +68,8 @@
             <p>{{ lesson.content | safe }}</p>
         </div>
 
-        <h2>Формы глагола Ser:</h2>
+        {% if lesson.ser_conjugations or lesson.estar_conjugations or lesson.haber_conjugations %}
+        <h2>Формы глаголов:</h2>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -82,61 +83,33 @@
                 </tr>
             </thead>
             <tbody>
+                {% if lesson.ser_conjugations %}
                 <tr>
-                    <td>Presente</td>
-                    {% for form in lesson.ser_conjugations["Presente"] %}
+                    <td>Ser (Presente)</td>
+                    {% for form in lesson.ser_conjugations.Presente %}
                     <td>{{ form }}</td>
                     {% endfor %}
                 </tr>
+                {% endif %}
+                {% if lesson.estar_conjugations %}
                 <tr>
-                    <td>Pretérito</td>
-                    {% for form in lesson.ser_conjugations["Pretérito"] %}
+                    <td>Estar (Presente)</td>
+                    {% for form in lesson.estar_conjugations.Presente %}
                     <td>{{ form }}</td>
                     {% endfor %}
                 </tr>
+                {% endif %}
+                {% if lesson.haber_conjugations %}
                 <tr>
-                    <td>Futuro</td>
-                    {% for form in lesson.ser_conjugations["Futuro"] %}
+                    <td>Haber (Presente)</td>
+                    {% for form in lesson.haber_conjugations.Presente %}
                     <td>{{ form }}</td>
                     {% endfor %}
                 </tr>
+                {% endif %}
             </tbody>
         </table>
-
-        <h2>Формы глагола Estar:</h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Время</th>
-                    <th>Yo</th>
-                    <th>Tú</th>
-                    <th>Él/Ella/Usted</th>
-                    <th>Nosotros</th>
-                    <th>Vosotros</th>
-                    <th>Ellos/Ellas/Ustedes</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Presente</td>
-                    {% for form in lesson.estar_conjugations["Presente"] %}
-                    <td>{{ form }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>Pretérito</td>
-                    {% for form in lesson.estar_conjugations["Pretérito"] %}
-                    <td>{{ form }}</td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>Futuro</td>
-                    {% for form in lesson.estar_conjugations["Futuro"] %}
-                    <td>{{ form }}</td>
-                    {% endfor %}
-                </tr>
-            </tbody>
-        </table>
+        {% endif %}
 
         <h2>Примеры:</h2>
         <ul>

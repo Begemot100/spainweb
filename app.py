@@ -358,10 +358,10 @@ def grammar():
 
 @app.route("/grammar/<int:lesson_id>")
 def grammar_lesson(lesson_id):
-    # Данные урока Ser и Estar
-    if lesson_id == 1:
-        lesson = {
-            "id": lesson_id,  # Добавляем ID урока для использования в шаблоне
+    # Словарь с данными всех уроков
+    lessons = {
+        1: {
+            "id": 1,  # ID урока
             "title": "Глаголы Ser и Estar",
             "content": """
                 Глаголы <strong>ser</strong> и <strong>estar</strong> переводятся как "быть", но используются в разных ситуациях.
@@ -386,13 +386,38 @@ def grammar_lesson(lesson_id):
                 {"sentence": "El libro está en la mesa.", "translation": "Книга на столе."},
                 {"sentence": "Nosotros somos de España.", "translation": "Мы из Испании."},
             ]
+        },
+        2: {
+            "id": 2,  # ID второго урока
+            "title": "Глагол Haber",
+            "content": """
+                Глагол <strong>haber</strong> используется для выражения существования и для образования сложных времён.
+                <ul>
+                    <li>Используется в конструкции <strong>hay</strong>, чтобы сказать "есть", "существует".</li>
+                    <li>В сложных временах используется как вспомогательный глагол.</li>
+                </ul>
+            """,
+            "haber_conjugations": {
+                "Presente": ["he", "has", "ha", "hemos", "habéis", "han"],
+                "Pretérito": ["hube", "hubiste", "hubo", "hubimos", "hubisteis", "hubieron"],
+                "Futuro": ["habré", "habrás", "habrá", "habremos", "habréis", "habrán"]
+            },
+            "examples": [
+                {"sentence": "Hay un libro en la mesa.", "translation": "На столе есть книга."},
+                {"sentence": "He estudiado mucho hoy.", "translation": "Я много учился сегодня."},
+                {"sentence": "Habrá una reunión mañana.", "translation": "Завтра будет собрание."},
+            ]
         }
-        return render_template("grammar_lesson.html", lesson=lesson)
+    }
 
-    # Обработка других уроков (если будут добавлены в будущем)
-    else:
-        flash("Lesson not found.", "error")
+    # Получаем урок по его ID
+    lesson = lessons.get(lesson_id)
+    if not lesson:
+        flash("Урок не найден.", "error")
         return redirect(url_for("dashboard"))
+
+    # Отображение урока
+    return render_template("grammar_lesson.html", lesson=lesson)
 
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
