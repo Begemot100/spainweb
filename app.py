@@ -407,6 +407,33 @@ def grammar_lesson(lesson_id):
                 {"sentence": "He estudiado mucho hoy.", "translation": "Я много учился сегодня."},
                 {"sentence": "Habrá una reunión mañana.", "translation": "Завтра будет собрание."},
             ]
+        },
+        3: {
+            "id": 3,
+            "title": "Глаголы Tener и Hacer",
+            "content": """
+                Глаголы <strong>tener</strong> и <strong>hacer</strong> являются одними из самых распространённых в испанском языке.
+                <ul>
+                    <li><strong>Tener</strong>: используется для выражения владения, возраста, а также в устойчивых выражениях (например, tener hambre — быть голодным).</li>
+                    <li><strong>Hacer</strong>: используется для описания действий и погодных условий (например, hacer la cama — заправлять кровать, hace frío — холодно).</li>
+                </ul>
+            """,
+            "tener_conjugations": {
+                "Presente": ["tengo", "tienes", "tiene", "tenemos", "tenéis", "tienen"],
+                "Pretérito": ["tuve", "tuviste", "tuvo", "tuvimos", "tuvisteis", "tuvieron"],
+                "Futuro": ["tendré", "tendrás", "tendrá", "tendremos", "tendréis", "tendrán"]
+            },
+            "hacer_conjugations": {
+                "Presente": ["hago", "haces", "hace", "hacemos", "hacéis", "hacen"],
+                "Pretérito": ["hice", "hiciste", "hizo", "hicimos", "hicisteis", "hicieron"],
+                "Futuro": ["haré", "harás", "hará", "haremos", "haréis", "harán"]
+            },
+            "examples": [
+                {"sentence": "Tengo un coche.", "translation": "У меня есть машина."},
+                {"sentence": "Hace calor hoy.", "translation": "Сегодня жарко."},
+                {"sentence": "Ella tiene 25 años.", "translation": "Ей 25 лет."},
+                {"sentence": "Hago mi tarea todas las noches.", "translation": "Я делаю домашнее задание каждую ночь."},
+            ]
         }
     }
 
@@ -425,28 +452,26 @@ def grammar_test(lesson_id):
         1: [
             {"id": 1, "question": "¿Quién es el profesor?", "translation": "Кто учитель?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
             {"id": 2, "question": "¿Dónde está el libro?", "translation": "Где находится книга?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
-            {"id": 3, "question": "¿De dónde somos?", "translation": "Откуда мы?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
-            {"id": 4, "question": "¿Cómo está ella?", "translation": "Как она себя чувствует?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
         ],
         2: [
             {"id": 1, "question": "¿Qué hay en la mesa?", "translation": "Что есть на столе?", "options": ["Hay", "Ser", "Estar", "Haber"], "answer": "Hay"},
-            {"id": 2, "question": "¿Has hecho los deberes?", "translation": "Ты сделал домашнюю работу?", "options": ["Has", "Ser", "Estar", "Haber"], "answer": "Has"},
-            {"id": 3, "question": "¿Habrá una reunión mañana?", "translation": "Завтра будет собрание?", "options": ["Habrá", "Hay", "Hacer", "Hubo"], "answer": "Habrá"},
+        ],
+        3: [
+            {"id": 1, "question": "¿Cuántos años tienes?", "translation": "Сколько тебе лет?", "options": ["Hacer", "Tener", "Ser", "Estar"], "answer": "Tener"},
+            {"id": 2, "question": "¿Qué haces por la mañana?", "translation": "Что ты делаешь утром?", "options": ["Hacer", "Tener", "Estar", "Ser"], "answer": "Hacer"},
         ],
     }
 
-    # Получение данных вопросов для урока
     questions = questions_data.get(lesson_id)
     if not questions:
-        flash("Тест для данного урока не найден.", "error")
-        return redirect(url_for("grammar"))  # Возврат к списку уроков, если урока нет
+        flash("Тест не найден.", "error")
+        return redirect(url_for("grammar"))
 
     if request.method == "POST":
         user_answers = request.form
         correct_answers = sum(1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"])
         score = (correct_answers / len(questions)) * 100
 
-        # Сохранение прогресса в базе данных
         progress = Progress.query.filter_by(user_id=session["user_id"], grammar_lesson_id=lesson_id).first()
         if not progress:
             progress = Progress(user_id=session["user_id"], grammar_lesson_id=lesson_id, score=score)
@@ -455,12 +480,9 @@ def grammar_test(lesson_id):
             progress.score = max(progress.score, score)
         db.session.commit()
 
-        # Возврат результатов
         return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
 
-    # Отображение теста
     return render_template("grammar_test.html", questions=questions, lesson_title=f"Урок {lesson_id}")
-
 
 if __name__ == "__main__":
     with app.app_context():
