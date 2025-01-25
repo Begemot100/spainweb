@@ -421,47 +421,45 @@ def grammar_lesson(lesson_id):
 
 @app.route("/grammar/test/<int:lesson_id>", methods=["GET", "POST"])
 def grammar_test(lesson_id):
-    if lesson_id == 1:
-        questions = [
+    questions_data = {
+        1: [
             {"id": 1, "question": "¿Quién es el profesor?", "translation": "Кто учитель?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
             {"id": 2, "question": "¿Dónde está el libro?", "translation": "Где находится книга?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
             {"id": 3, "question": "¿De dónde somos?", "translation": "Откуда мы?", "options": ["ser", "estar", "tener", "hacer"], "answer": "ser"},
             {"id": 4, "question": "¿Cómo está ella?", "translation": "Как она себя чувствует?", "options": ["ser", "estar", "tener", "hacer"], "answer": "estar"},
-        ]
+        ],
+        2: [
+            {"id": 1, "question": "¿Qué hay en la mesa?", "translation": "Что есть на столе?", "options": ["Hay", "Ser", "Estar", "Haber"], "answer": "Hay"},
+            {"id": 2, "question": "¿Has hecho los deberes?", "translation": "Ты сделал домашнюю работу?", "options": ["Has", "Ser", "Estar", "Haber"], "answer": "Has"},
+            {"id": 3, "question": "¿Habrá una reunión mañana?", "translation": "Завтра будет собрание?", "options": ["Habrá", "Hay", "Hacer", "Hubo"], "answer": "Habrá"},
+        ],
+    }
 
-        if request.method == "POST":
-            user_answers = request.form
-            correct_answers = sum(1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"])
-            score = (correct_answers / len(questions)) * 100
+    # Получение данных вопросов для урока
+    questions = questions_data.get(lesson_id)
+    if not questions:
+        flash("Тест для данного урока не найден.", "error")
+        return redirect(url_for("grammar"))  # Возврат к списку уроков, если урока нет
 
-            # Сохранение прогресса
-            progress = Progress.query.filter_by(user_id=session["user_id"], grammar_lesson_id=lesson_id).first()
+    if request.method == "POST":
+        user_answers = request.form
+        correct_answers = sum(1 for q in questions if user_answers.get(f"question-{q['id']}") == q["answer"])
+        score = (correct_answers / len(questions)) * 100
 
-            if not progress:
-                # Новый прогресс
-                progress = Progress(
-                    user_id=session["user_id"],
-                    topic_id=None,  # Для грамматического урока topic_id отсутствует
-                    grammar_lesson_id=lesson_id,
-                    score=score
-                )
-                db.session.add(progress)
-            else:
-                # Обновление существующего прогресса
-                progress.score = max(progress.score, score)
+        # Сохранение прогресса в базе данных
+        progress = Progress.query.filter_by(user_id=session["user_id"], grammar_lesson_id=lesson_id).first()
+        if not progress:
+            progress = Progress(user_id=session["user_id"], grammar_lesson_id=lesson_id, score=score)
+            db.session.add(progress)
+        else:
+            progress.score = max(progress.score, score)  # Обновление, если результат выше предыдущего
+        db.session.commit()
 
-            db.session.commit()
+        # Возврат результатов
+        return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
 
-            # Вывод результата пользователю
-            if score >= 80:
-                flash("Поздравляем! Вы успешно прошли тест.", "success")
-            else:
-                flash("К сожалению, вы не набрали минимальный балл.", "error")
-
-            return render_template("test_result.html", score=score, total=len(questions), correct=correct_answers)
-
-        return render_template("grammar_test.html", questions=questions, lesson_title="Ser vs Estar")
-
+    # Отображение теста
+    return render_template("grammar_test.html", questions=questions, lesson_title=f"Урок {lesson_id}")
 
 if __name__ == "__main__":
     with app.app_context():
