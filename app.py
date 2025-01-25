@@ -452,7 +452,7 @@ def grammar_test(lesson_id):
             progress = Progress(user_id=session["user_id"], grammar_lesson_id=lesson_id, score=score)
             db.session.add(progress)
         else:
-            progress.score = max(progress.score, score)  # Обновление, если результат выше предыдущего
+            progress.score = max(progress.score, score)
         db.session.commit()
 
         # Возврат результатов
