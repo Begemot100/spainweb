@@ -91,6 +91,25 @@
             background-color: #e6e6e6;
         }
 
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .word-tag {
+            background-color: #007BFF;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .word-tag:hover {
+            background-color: #0056b3;
+        }
+
         /* Адаптация для маленьких экранов */
         @media (max-width: 768px) {
             .container {
@@ -147,6 +166,14 @@
             <div class="progress-card">
                 <p><strong>Score:</strong> {{ progress.score | round(0) }}%</p>
                 <p><strong>Topic:</strong> {{ progress.topic }}</p>
+                <p><strong>Learned Words:</strong></p>
+                <div class="word-list">
+                    {% for word in progress.learned_words %}
+                    <span class="word-tag" onclick="toggleWord(this)" data-word="{{ word.word }}" data-translation="{{ word.translation }}">
+                        {{ word.word }}
+                    </span>
+                    {% endfor %}
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -154,7 +181,7 @@
         <p>No progress yet. Start studying to track your progress!</p>
         {% endif %}
 
-      <h2>Прогресс по грамматике</h2>
+        <h2>Прогресс по грамматике</h2>
         {% if grammar_progress %}
         <div class="progress-container">
             {% for progress in grammar_progress %}
@@ -171,5 +198,19 @@
         <!-- Кнопка изучать грамматику -->
         <a href="/grammar" class="grammar-btn">Изучать грамматику</a>
     </div>
+
+    <script>
+        function toggleWord(element) {
+            const currentText = element.textContent;
+            const word = element.getAttribute('data-word');
+            const translation = element.getAttribute('data-translation');
+
+            if (currentText === word) {
+                element.textContent = translation;
+            } else {
+                element.textContent = word;
+            }
+        }
+    </script>
 </body>
 </html>
