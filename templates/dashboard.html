@@ -154,13 +154,13 @@
         <p>No progress yet. Start studying to track your progress!</p>
         {% endif %}
 
-        <h2>Прогресс по грамматике</h2>
+      <h2>Прогресс по грамматике</h2>
         {% if grammar_progress %}
         <div class="progress-container">
             {% for progress in grammar_progress %}
             <div class="progress-card">
-                <p><strong>Урок:</strong> {{ progress.lesson_title }}</p>
-                <p><strong>Прогресс:</strong> {{ progress.score | round(0) }}%</p>
+                <p><strong>Урок: {{ progress.lesson_title }}</strong></p>
+                <p>Прогресс: {{ progress.score | round(0) }}%</p>
             </div>
             {% endfor %}
         </div>

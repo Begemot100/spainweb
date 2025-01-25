@@ -461,6 +461,7 @@ def grammar_test(lesson_id):
     # Отображение теста
     return render_template("grammar_test.html", questions=questions, lesson_title=f"Урок {lesson_id}")
 
+
 if __name__ == "__main__":
     with app.app_context():
         print("Creating tables...")
