@@ -8,161 +8,226 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
-            color: #333;
-        }
+      /* Основные стили */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+/* Контейнер */
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-        h1, h2 {
-            text-align: center;
-        }
+/* Заголовки */
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
 
-        .topics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
 
-        .btn {
-            display: block;
-            padding: 10px;
-            text-align: center;
-            background-color: #007BFF;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.2s ease;
-        }
+h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #666;
+}
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
+/* Грид для тем */
+.topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
 
-        .grammar-btn {
-            margin-top: 20px;
-            display: inline-block;
-            padding: 12px 20px;
-            background-color: #28a745;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-        }
+/* Кнопки */
+.btn {
+    display: block;
+    padding: 12px 15px;
+    text-align: center;
+    background-color: #007BFF;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
 
-        .grammar-btn:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-        }
+.btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
 
-        .grammar-btn:active {
-            background-color: #1e7e34;
-        }
+.grammar-btn {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #28a745;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.2s ease, transform 0.2s;
+}
 
-        .progress-container {
-            margin-top: 20px;
-        }
+.grammar-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
 
-        .progress-card {
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
+/* Карточки прогресса */
+.progress-container {
+    margin-top: 20px;
+}
 
-        .progress-card:hover {
-            background-color: #e6e6e6;
-        }
+.progress-card {
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, transform 0.2s;
+    cursor: pointer;
+}
 
-        .word-list {
-            display: none;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 10px;
-        }
+.progress-card:hover {
+    background-color: #e6e6e6;
+    transform: translateY(-2px);
+}
 
-        .word-tag {
-            background-color: #007BFF;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
+/* Список слов */
+.word-list {
+    display: none;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    transition: max-height 0.3s ease;
+}
 
-        .word-tag:hover {
-            background-color: #0056b3;
-        }
+.word-list.active {
+    display: flex;
+}
 
-        .btn-repeat {
-            margin-top: 10px;
-            display: inline-block;
-            background-color: #FFC107;
-            color: #333;
-            padding: 8px 12px;
-            border-radius: 5px;
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-        }
+.word-tag {
+    background-color: #007BFF;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-        .btn-repeat:hover {
-            background-color: #E0A800;
-        }
+.word-tag:hover {
+    background-color: #0056b3;
+}
 
-        /* Адаптация для маленьких экранов */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
+/* Кнопка повторить */
+.btn-repeat {
+    margin-top: 10px;
+    display: inline-block;
+    background-color: #FFC107;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
 
-            h1, h2 {
-                font-size: 1.5em;
-            }
+.btn-repeat:hover {
+    background-color: #E0A800;
+    transform: translateY(-2px);
+}
 
-            .btn {
-                font-size: 1em;
-                padding: 8px;
-            }
+/* Адаптивность для планшетов и мобильных устройств */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
 
-            .grammar-btn {
-                font-size: 1em;
-            }
-        }
+    h1 {
+        font-size: 24px;
+    }
 
-        /* Адаптация для iPhone SE и аналогичных устройств */
-        @media (max-width: 375px) {
-            h1, h2 {
-                font-size: 1.2em;
-            }
+    h2 {
+        font-size: 18px;
+    }
 
-            .btn {
-                padding: 6px;
-                font-size: 0.9em;
-            }
+    .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
 
-            .grammar-btn {
-                font-size: 0.9em;
-            }
-        }
+    .grammar-btn {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+
+    .progress-card {
+        font-size: 14px;
+    }
+
+    .word-tag {
+        font-size: 12px;
+    }
+
+    .btn-repeat {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+}
+
+/* Адаптивность для iPhone SE и маленьких устройств */
+@media (max-width: 375px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .grammar-btn {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .progress-card {
+        font-size: 12px;
+    }
+
+    .word-tag {
+        font-size: 10px;
+        padding: 5px 8px;
+    }
+
+    .btn-repeat {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+}
     </style>
 </head>
 <body>
