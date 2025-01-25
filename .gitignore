@@ -1,6 +1,6 @@
 # Игнорировать виртуальное окружение
 .venv/
-
+/instance/database.db
 # Игнорировать Terraform файлы и каталоги
 .terraform/
 *.tfstate
