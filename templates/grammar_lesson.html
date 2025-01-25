@@ -10,53 +10,122 @@
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
             color: #212529;
+            margin: 0;
+            padding: 0;
         }
+
         .container {
-            margin-top: 20px;
+            margin: 20px auto;
             padding: 15px;
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
         }
+
         h1, h2 {
             text-align: center;
+            margin-bottom: 20px;
         }
+
+        .lesson-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Ограничение ширины таблиц и добавление прокрутки */
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
         table {
             font-size: 14px;
+            width: 100%;
+            border-collapse: collapse;
         }
+
+        table th, table td {
+            text-align: center;
+            padding: 8px;
+        }
+
         ul {
             padding-left: 20px;
+            margin-bottom: 20px;
         }
-        .btn {
-            width: 100%;
+
+        ul li {
             margin-bottom: 10px;
         }
+
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #007BFF;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        /* Адаптивность */
         @media (max-width: 768px) {
             h1 {
-                font-size: 1.5em;
+                font-size: 1.5rem;
             }
+
             h2 {
-                font-size: 1.2em;
+                font-size: 1.2rem;
             }
+
             table {
                 font-size: 12px;
             }
+
             .btn {
-                font-size: 0.9em;
+                font-size: 14px;
+                padding: 10px;
             }
         }
+
         @media (max-width: 375px) {
             h1 {
-                font-size: 1.2em;
+                font-size: 1.2rem;
             }
+
             h2 {
-                font-size: 1em;
+                font-size: 1rem;
             }
+
             table {
                 font-size: 11px;
             }
+
             .btn {
-                font-size: 0.8em;
+                font-size: 12px;
+                padding: 8px;
             }
         }
     </style>
@@ -70,45 +139,47 @@
 
         {% if lesson.ser_conjugations or lesson.estar_conjugations or lesson.haber_conjugations %}
         <h2>Формы глаголов:</h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Время</th>
-                    <th>Yo</th>
-                    <th>Tú</th>
-                    <th>Él/Ella/Usted</th>
-                    <th>Nosotros</th>
-                    <th>Vosotros</th>
-                    <th>Ellos/Ellas/Ustedes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if lesson.ser_conjugations %}
-                <tr>
-                    <td>Ser (Presente)</td>
-                    {% for form in lesson.ser_conjugations.Presente %}
-                    <td>{{ form }}</td>
-                    {% endfor %}
-                </tr>
-                {% endif %}
-                {% if lesson.estar_conjugations %}
-                <tr>
-                    <td>Estar (Presente)</td>
-                    {% for form in lesson.estar_conjugations.Presente %}
-                    <td>{{ form }}</td>
-                    {% endfor %}
-                </tr>
-                {% endif %}
-                {% if lesson.haber_conjugations %}
-                <tr>
-                    <td>Haber (Presente)</td>
-                    {% for form in lesson.haber_conjugations.Presente %}
-                    <td>{{ form }}</td>
-                    {% endfor %}
-                </tr>
-                {% endif %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Время</th>
+                        <th>Yo</th>
+                        <th>Tú</th>
+                        <th>Él/Ella/Usted</th>
+                        <th>Nosotros</th>
+                        <th>Vosotros</th>
+                        <th>Ellos/Ellas/Ustedes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if lesson.ser_conjugations %}
+                    <tr>
+                        <td>Ser (Presente)</td>
+                        {% for form in lesson.ser_conjugations.Presente %}
+                        <td>{{ form }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+                    {% if lesson.estar_conjugations %}
+                    <tr>
+                        <td>Estar (Presente)</td>
+                        {% for form in lesson.estar_conjugations.Presente %}
+                        <td>{{ form }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+                    {% if lesson.haber_conjugations %}
+                    <tr>
+                        <td>Haber (Presente)</td>
+                        {% for form in lesson.haber_conjugations.Presente %}
+                        <td>{{ form }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
         {% endif %}
 
         <h2>Примеры:</h2>
@@ -119,10 +190,8 @@
         </ul>
 
         <!-- Кнопки -->
-        <a href="/grammar" class="btn btn-primary mt-3">Вернуться к грамматике</a>
-        <a href="/grammar/test/{{ lesson.id }}" class="btn btn-success mt-3">Пройти тест</a>
+        <a href="/grammar" class="btn btn-primary">Вернуться к грамматике</a>
+        <a href="/grammar/test/{{ lesson.id }}" class="btn btn-success">Пройти тест</a>
     </div>
 </body>
 </html>
-
-<!--1-->
