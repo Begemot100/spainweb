@@ -262,7 +262,7 @@ h2 {
                     </span>
                     {% endfor %}
                 </div>
-                <a href="/repeat_words/{{ progress.topic_id }}" class="btn-repeat">Повторить слова</a>
+                <a href="/repeat_test/{{ progress.topic_id }}" class="btn-repeat">Repeat words</a>
             </div>
             {% endfor %}
         </div>
@@ -270,13 +270,13 @@ h2 {
         <p>No progress yet. Start studying to track your progress!</p>
         {% endif %}
 
-        <h2>Прогресс по грамматике</h2>
+        <h2>Grammar progress</h2>
         {% if grammar_progress %}
         <div class="progress-container">
             {% for progress in grammar_progress %}
             <div class="progress-card">
-                <p><strong>Урок: {{ progress.lesson_title }}</strong></p>
-                <p>Прогресс: {{ progress.score | round(0) }}%</p>
+                <p><strong>Lesson: {{ progress.lesson_title }}</strong></p>
+                <p>Progress: {{ progress.score | round(0) }}%</p>
             </div>
             {% endfor %}
         </div>
@@ -285,7 +285,7 @@ h2 {
         {% endif %}
 
         <!-- Кнопка изучать грамматику -->
-        <a href="/grammar" class="grammar-btn">Изучать грамматику</a>
+        <a href="/grammar" class="grammar-btn">Grammar</a>
     </div>
 
     <script>
