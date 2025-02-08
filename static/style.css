@@ -143,7 +143,7 @@ h2 {
 
 .options input[type="radio"] {
     margin-right: 12px;
-    accent-color: #007aff; /* Радиокнопки в стиле Apple */
+    accent-color: #007aff; 
 }
 
 .options label:hover {
@@ -255,7 +255,7 @@ input[type="radio"]:checked + label {
     }
 }
 
-/* Адаптация для iPhone SE и аналогичных устройств */
+
 @media (max-width: 375px) {
     h1, h2 {
         font-size: 1.2em;
