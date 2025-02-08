@@ -148,7 +148,6 @@
             }
         }
 
-        /* Адаптация для iPhone SE и аналогичных устройств */
         @media (max-width: 375px) {
             h1, h2 {
                 font-size: 1.2em;
@@ -205,16 +204,13 @@
     </div>
 
     <script>
-        // Функция для переключения между словом и переводом
         function toggleWord(event, element) {
-            // Останавливаем всплытие события, чтобы не закрывался блок
             event.stopPropagation();
 
             const currentText = element.textContent;
             const word = element.getAttribute('data-word');
             const translation = element.getAttribute('data-translation');
 
-            // Меняем текст между словом и переводом
             if (currentText === word) {
                 element.textContent = translation;
             } else {
@@ -222,17 +218,16 @@
             }
         }
 
-        // Функция для переключения видимости прогресса
         function toggleProgress(card) {
             const content = card.querySelector('.progress-content');
             const icon = card.querySelector('.toggle-icon');
 
             if (content.style.display === 'none' || content.style.display === '') {
                 content.style.display = 'block';
-                icon.textContent = '−'; // Изменяем иконку на минус
+                icon.textContent = '−'; 
             } else {
                 content.style.display = 'none';
-                icon.textContent = '+'; // Изменяем иконку на плюс
+                icon.textContent = '+'; 
             }
         }
     </script>
