@@ -52,13 +52,13 @@ resource "aws_security_group" "ec2_sg" {
 }
 
 resource "aws_instance" "ec2_instance" {
-  ami           = "ami-0000c3928334a1841"  # Замените на правильный ID AMI
-  instance_type = "t3.medium"               # Тип инстанса
+  ami           = "ami-0000c3928334a1841"  
+  instance_type = "t3.medium"               
 
   subnet_id             = aws_subnet.public[0].id
-  security_groups       = ["sg-0e31aef94032513b1"]  # Исправленный параметр
+  security_groups       = ["sg-0e31aef94032513b1"]  
 
-  key_name   = "siteKey"  # Имя ключа
+  key_name   = "siteKey"  
   public_key = file("/Users/germany/.ssh/siteKey.pub")
   iam_instance_profile  = aws_iam_instance_profile.ec2_instance_profile.name
 
