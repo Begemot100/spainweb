@@ -7,16 +7,13 @@ import openai
 import random
 from models import User, Topic, Word, Progress
 from extensions import db  
-# Загружаем переменные окружения
 load_dotenv()
 
-# Создаём приложение Flask
 app = Flask(__name__)
 
-# Конфигурация базы данных
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, 'instance')
-os.makedirs(INSTANCE_DIR, exist_ok=True)  # Убедитесь, что папка instance существует
+os.makedirs(INSTANCE_DIR, exist_ok=True)  
 DATABASE_PATH = os.path.join(INSTANCE_DIR, 'database.db')
 DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
 
@@ -24,15 +21,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "your_default_secret_key")
 
-# Проверка API ключа OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     raise ValueError("OPENAI_API_KEY не настроен.")
 
-# Инициализация базы данных
 db.init_app(app)
 
-# Отладочные выводы
 print("BASE_DIR:", BASE_DIR)
 print("DATABASE_PATH:", DATABASE_PATH)
 print("DATABASE_URL:", DATABASE_URL)
